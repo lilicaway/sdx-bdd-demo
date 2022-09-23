@@ -14,16 +14,24 @@ export class TokenizerService {
 
   // We make this async to pretend that we are doing this asynchronosly with a server.
   async tokenize(amountChf: number): Promise<void> {
-    // Note that this has a bug: it doesn't check that there are enough funds to do the operation.
-    this.internalBalanceChf -= amountChf;
-    this.internalBalanceTchf += amountChf;
+    // Now we check that there are enough funds to do the operation. 
+    if (this.internalBalanceChf - amountChf >= 0) {
+      this.internalBalanceChf -= amountChf;
+      this.internalBalanceTchf += amountChf;
+    } else {
+      throw new Error('Not enough funds');
+    }
   }
 
   // We make this async to pretend that we are doing this asynchronosly with a server.
   async deTokenize(amountTchf: number): Promise<void> {
-    // Note that this has a bug: it doesn't check that there are enough funds to do the operation.
-    this.internalBalanceChf += amountTchf;
-    this.internalBalanceTchf -= amountTchf;
+    //Now we check that there are enough funds to do the operation.
+    if (this.internalBalanceTchf - amountTchf >= 0) {
+      this.internalBalanceChf += amountTchf;
+      this.internalBalanceTchf -= amountTchf;
+    } else {
+      throw new Error('Not enough funds');
+    }
   }
 
   /** Balance of CHF for the current user. */

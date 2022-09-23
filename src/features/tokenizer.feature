@@ -8,4 +8,9 @@ Feature: Tokenizer
     When I tokenize 10 CHF
     Then I have a final balance of 0 CHF and 10 TCHF
 
+  Scenario: Tokenize CHF without enough funds
+    Given I have 0 CHF and 0 TCHF
+    When I tokenize 10 CHF
+    Then I have a final balance of 0 CHF and 0 TCHF
+    And the error is 'Error: Not enough funds'
   

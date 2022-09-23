@@ -5,11 +5,14 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import { useCallback, useEffect, useState } from "react";
 import { useTokenizerServiceContext } from "./tokenizer_provider";
+import FormHelperText from "@mui/material/FormHelperText";
+import { FormControl } from "@mui/material";
 
 /** Very simple page that uses the TokenizerService. */
 export const TokenizerPage = () => {
   const [balanceChf, setBalanceChf] = useState(0);
   const [balanceTchf, setBalanceTchf] = useState(0);
+  const [errorMessage, setErrorMessage] = useState("");
   const tokenizerService = useTokenizerServiceContext();
 
   const refreshBalances = useCallback(() => {
@@ -27,7 +30,7 @@ export const TokenizerPage = () => {
   return (
     <Card sx={{ maxWidth: 345 }}>
       <CardContent>
-        <Typography gutterBottom component="div" className="tokenizerTitle">
+        <Typography gutterBottom variant="h3" component="div">
           Tokenizer
         </Typography>
         <div>
@@ -38,12 +41,20 @@ export const TokenizerPage = () => {
             Balance TCHF: {balanceTchf}
           </Typography>
         </div>
+        <FormControl error={!!errorMessage}>
+          <FormHelperText>{errorMessage}</FormHelperText>
+        </FormControl>
       </CardContent>
       <CardActions>
         <Button
           size="small"
           onClick={async () => {
-            await tokenizerService.tokenize(10);
+            try {
+              setErrorMessage("");
+              await tokenizerService.tokenize(10);
+            } catch (err) {
+              setErrorMessage(`${err}`);
+            }
             refreshBalances();
           }}
         >
@@ -52,7 +63,12 @@ export const TokenizerPage = () => {
         <Button
           size="small"
           onClick={async () => {
-            await tokenizerService.deTokenize(10);
+            try {
+              setErrorMessage("");
+              await tokenizerService.deTokenize(10);
+            } catch (err) {
+              setErrorMessage(`${err}`);
+            }
             refreshBalances();
           }}
         >
